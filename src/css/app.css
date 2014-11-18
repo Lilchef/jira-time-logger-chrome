@@ -1,0 +1,147 @@
+body
+{
+    background-color: #EEE;
+    min-width: 500px;
+}
+
+form
+{
+    margin: 0px;
+}
+
+sup
+{
+    color: red;
+}
+
+h3
+{
+    font-size: 1.8rem;
+}
+
+h4
+{
+    font-size: 1.2rem;
+}
+
+#mask
+{
+    width: 100%;
+    height: 100%;
+    background: #EEE;
+    opacity: 0.8;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 999;
+}
+
+#maskText
+{
+    position: absolute;
+    top: 250px;
+    padding: 5px;
+    width: 100%;
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+#configError
+{
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+#version
+{
+    font-size: 0.8rem;
+}
+
+#loggerForm
+{
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    border-bottom: solid 1px gray;
+}
+
+#timeAuto
+{
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+}
+
+#timeManual
+{
+    display: none;
+}
+
+#summary
+{
+    font-style: italic;
+    font-size: 0.8rem;
+    padding: 0px 5px;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+#closeLabel span
+{
+    top: 8px;
+}
+
+#loggedTotalDisplay
+{
+    float: left;
+    margin-right: 5px;
+}
+
+#userLogContainer
+{
+    width: 100%;
+    height: 140px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: solid 1px gray;
+    background-color: white;
+    margin-bottom: 5px;
+}
+
+div.userLog
+{
+    padding: 5px;
+    font-size: 0.8em;
+    line-height: 1em;
+    white-space: nowrap;
+}
+
+div.userLog a
+{
+    text-decoration: underline;
+}
+
+li.field
+{
+    margin-bottom: 5px;
+}
+
+li.field.danger:after
+{
+    content: ""
+}
+
+#footer
+{
+    font-size: 0.6rem;
+}
+
+#footer i[class^="icon-"], 
+#footer i[class*=" icon-"]
+{
+    min-width: auto;
+    margin: 0px;
+    font-size: 1rem;
+    display: inline;
+}

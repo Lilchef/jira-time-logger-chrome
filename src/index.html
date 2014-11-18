@@ -1,0 +1,132 @@
+<html>
+<head>
+    <title>JIRA Time Logger</title>
+    <link rel="stylesheet" type="text/css" href="gumby/css/gumby.css" />
+    <link rel="stylesheet" type="text/css" href="css/app.css" />
+    <script type="text/javascript" src="js/modernizr.min.js"></script>
+</head>
+    <body>
+        <div class="row">
+            <div class="one column">
+                &nbsp;
+            </div>
+            <div class="four columns text-center">
+                <h3>JIRA Time Logger</h3>
+            </div>
+            <div class="one column text-right">
+                <span id="version"></span>
+            </div>
+        </div>
+
+        <form id="loggerForm" method="POST">
+            <div class="row">
+                <ul class="three columns">
+                    <li class="field">
+                        <label for="time">Time <sup>*</sup></label>
+                    </li>
+                    <li class="field">
+                        <label for="time">Type of work <sup>*</sup></label>
+                    </li>
+                    <li class="field">
+                        <label for="issue">Main issue key <sup>*</sup></label>
+                        <br />
+                    </li>
+                    <li class="field">
+                        <label for="close">Resolve/close issue/sub-task after time logged?</label>
+                    </li>
+                    <li class="field">
+                        <label for="description">Description of work</label>
+                    </li>
+                </ul>
+                <ul class="three columns">
+                    <li class="field">
+                        <div class="row">
+                            <div class="four columns">
+                                <div id='timeAuto' class="input timeAuto" title="Click to override">0m</div>
+                                <input type="text" id="timeManual" name="time" class="text input" placeholder="e.g. '1h 30m'" />
+                            </div>
+                            <div class="two columns">
+                                <div class="small rounded pretty danger btn icon-left icon-cancel">
+                                    <a href="#" id="clearTimeButton">Reset</a>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="field">
+                        <div class="picker">
+                            <select id="type" name="type">
+                                <option value="">Loading...</option>
+                            </select>
+                        </div>
+                    </li>
+                    <li class="field">
+                        <input type="text" id="issue" name="issue" class="text wide input" placeholder="e.g. 'ABC-123'" />
+                        <div id="summary">&nbsp;</div>
+                    </li>
+                    <li class="field">
+                        <label class="checkbox" id="closeLabel" for="close">
+                            <input type="checkbox" id="close" name="close" />
+                            <span></span> &nbsp;
+                        </label>
+                        <br />
+                    </li>
+                    <li class="field">
+                        <textarea id="description" name="description" class="input textarea" placeholder="Brief description of the work performed" ></textarea>
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+                <div class="three columns">
+                    <div class="small rounded pretty danger btn icon-left icon-cancel">
+                        <a href="#" id="resetFormButton">Reset form</a>
+                    </div>
+                </div>
+                <div class="three columns text-right">
+                    <div class="medium rounded pretty success btn icon-left icon-hourglass">
+                        <a href="#" id="logTimeButton">Log time</a>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <div class="row">
+            <div class="three columns">
+                <div id='loggedTotalDisplay'>
+                    Logged = <span id='loggedTotal'>0m</span>
+                </div>
+                <div class="small rounded pretty danger btn icon-left icon-cancel">
+                    <a href="#" id="resetLoggedTotalButton">Reset</a>
+                </div>
+            </div>
+            <div class="three columns text-right">
+                + Unlogged <span class='timeAuto'>0m</span> = <span id='dayGrandTotal'>0m</span>
+            </div>
+        </div>
+        <div class="row">
+            <div class="six columns">
+                <div id="userLogContainer">
+                    <!-- JS will add items here -->
+                </div>
+            </div>
+        </div>
+        <div class="row" id="footer">
+            <div class="three columns">
+                <i class="icon-cc" title="Creative Commons"></i> <i class="icon-cc-sa" title="Share-Alike licensed"></i>
+                &copy; Aaron Baker, <span id="copyYear">2013</span>. JIRA &copy; Atlassian, Inc.
+            </div>
+            <div class="three columns text-right">
+                <div class="small rounded pretty warning btn icon-left icon-cog">
+                    <a href="#" id="reconfigureButton">Reconfigure</a>
+                </div>
+                <div class="small rounded pretty primary btn icon-left icon-tools">
+                    <a href="#" id="bugButton">Report bug</a>
+                </div>
+            </div>
+        </div>
+
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="gumby/js/libs/gumby.min.js"></script>
+        <script type="text/javascript" src="js/require.js"></script>
+        <script type="text/javascript" src="js/require-setup.js"></script>
+        <script type="text/javascript" src="js/ui-index.js"></script>
+    </body>
+</html>

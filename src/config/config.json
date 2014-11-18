@@ -1,0 +1,14 @@
+{
+    "jira": {
+        "urlBase":  null,
+        "urlApi": "/rest/api/2/",
+        "username": null,
+        "password": null,
+        "mainTaskCloseTransition": "Resolve",
+        "subTaskCloseTransition": "Close",
+        "subTaskTypeExclusions": ["Sub-task"]
+    },
+    "jtl": {
+        "maxLogs": 50
+    }
+}
