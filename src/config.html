@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Configuration</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" type="text/css" href="gumby/css/gumby.css" />
+        <link rel="stylesheet" type="text/css" href="css/app.css" />
+        <script type="text/javascript" src="js/modernizr.min.js"></script>
+    </head>
+    <body>
+        <div class="row">
+            <div class="six columns text-center">
+                <h3>JIRA Time Logger</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="six columns text-center">
+                <h4>Configuration</h4>
+            </div>
+        </div>
+        <div class="row" id="configError">
+            &nbsp;
+        </div>
+        
+        <form id="configForm">
+            <div class="row">
+                <ul class="three columns">
+                    <li class="field">
+                        <label for="urlBase">JIRA URL <sup>*</sup></label>
+                    </li>
+                    <li class="field">
+                        <label for="username">Username <sup>*</sup></label> 
+                    </li>
+                    <li class="field">
+                        <label for="password">Password <sup>*</sup></label>
+                    </li>
+                    <li class="field">
+                        <label for="subTaskTypeExclusions">Subtask types to exclude (Comma-separated. Case-sensitive)</label>
+                    </li>
+                </ul>
+                <ul class="three columns">
+                    <li class="field">
+                        <input type="text" id="urlBase" name="jira.urlBase" class="text input" placeholder="Your JIRA install's URL" />
+                    </li>
+                    <li class="field">
+                        <input type="text" id="username" name="jira.username" class="text input" placeholder="Your JIRA username" />
+                    </li>
+                    <li class="field">
+                        <input type="password" id="password" name="jira.password" class="password input" placeholder="Your JIRA password" />
+                    </li>
+                    <li class="field">
+                        <textarea id="subTaskTypeExclusions" name="jira.subTaskTypeExclusions" class="textarea input" placeholder="e.g. Sub-task, Reviewing"></textarea>
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
+                <div class="six columns text-center">
+                    <div class="medium rounded pretty success btn icon-left icon-check">
+                        <input type="submit" id="configureButton" value="Submit" />
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <script type="text/javascript" src="js/jquery.min.js"></script>
+        <script type="text/javascript" src="gumby/js/libs/gumby.min.js"></script>
+        <script type="text/javascript" src="js/require.js"></script>
+        <script type="text/javascript" src="js/require-setup.js"></script>
+        <script type="text/javascript" src="js/ui-config.js"></script>
+    </body>
+</html>

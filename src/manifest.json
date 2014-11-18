@@ -1,0 +1,29 @@
+{
+    "manifest_version": 2,
+
+    "name": "JIRA Time Logger",
+    "description": "Easily keep track of and log time against your JIRA tickets",
+    "version": "2.0.0",
+
+    "options_page": "config.html",
+    "background": {
+        "persistent": true,
+        "scripts": [
+            "js/require.js",
+            "js/require-setup.js",
+            "js/index.js"
+        ]
+    },
+    "browser_action": {
+        "default_icon": "images/jira_time_logger_logo.png",
+        "default_popup": "index.html"
+    },
+    "icons": {
+        "128": "images/jira_time_logger_logo.png"
+    },
+    "permissions": [
+        "storage",
+        "https://*.atlassian.net/",
+        "http://fonts.googleapis.com/"
+    ]
+}
