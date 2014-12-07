@@ -77,7 +77,7 @@ define([
          */
         this.getAjaxValue = function(key)
         {
-            if (!ajaxValues[key]) {
+            if (ajaxValues[key] === undefined) {
                 return null;
             }
             return ajaxValues[key];

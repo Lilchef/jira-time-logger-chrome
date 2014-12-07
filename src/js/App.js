@@ -195,7 +195,7 @@ define([
         /**
          * Get the ActivityLogs
          *
-         * @returns Array pf ActivityLogs
+         * @returns Array of ActivityLogs
          */
         this.getActivityLogs = function()
         {
@@ -207,18 +207,29 @@ define([
          *
          * @param ActivityLog activityLog
          * @returns self
-         * @throws error if passed anything other than an ActivityLog instance
          */
         this.addActivityLog = function(activityLog)
         {
-            if (!(activityLog instanceof ActivityLog)) {
-                throw 'App.addActivityLog called with non-ActivityLog';
-            }
             this.getActivityLogs().push(activityLog);
             this.getEventDispatcher().activityLogAdded(activityLog);
             if (this.getActivityLogs().length > this.getConfig().get('maxLogs', 'jtl')) {
                 var oldestLog = this.getActivityLogs().shift();
                 this.getEventDispatcher().activityLogRemoved(oldestLog);
+            }
+
+            return this;
+        };
+
+        /**
+         * Remove all ActivityLogs
+         *
+         * @returns self
+         */
+        this.clearActivityLogs = function()
+        {
+            var log;
+            while (log = this.getActivityLogs().pop()) {
+                this.getEventDispatcher().activityLogRemoved(log);
             }
 
             return this;
@@ -356,126 +367,33 @@ define([
     };
 
     /**
-     * Get the sub-task types from JIRA
-     *
-     * @return Object Subtask types keyed by ID or null on failure
-     */
-    App.prototype.getSubTaskTypes = function()
-    {
-        return this.getJira().getSubTaskTypes();
-    };
-
-    /**
      * Log time to JIRA
      *
      * @param String time The time to log in JIRA time format (1d 1h 1m)
      * @param String issue The JIRA issue key
-     * @param String subtask (Optional) The subtask worked on. Defaults to none (main task)
-     * @param Boolean close (Optional) Should the issue / sub-task be closed? Default: false
      * @param String description (Optional) Description of the work done
      * @param String logAdditional (Optional) Extra text to add on to the ActivityLog message
      * @return Boolean Success?
      */
-    App.prototype.logTime = function(time, issue, subtask, close, description, logAdditional)
+    App.prototype.logTime = function(time, issue, description, logAdditional)
     {
         var workLogID = null;
 
-        // If no subtask assume main task
-        if (!subtask) {
-            workLogID = this.getJira().logTime(time, issue, description);
-            if (!workLogID) {
-                this.alertUser('Failed to log '+time+' against '+App.formatIssueKeyForLog(issue)+': no work log was returned by JIRA!');
-                return false;
-            }
-
-            var notification = time+' was successfully logged against '+App.formatIssueKeyForLog(issue);
-            if (logAdditional) {
-                notification += ' ('+logAdditional+')';
-            }
-            this.notifyUser(notification);
-
-            if (close) {
-                this.resolveCloseIssue(issue, this.getConfig().get('mainTaskCloseTransition'));
-            }
-
-            this.addToLoggedTotal(this.jiraTimeToStopwatchTime(time));
-
-            this.getEventDispatcher().timeLogged(time);
-            return true;
-        }
-
-        // Subtask
-        // First check we're not already on a subtask
-        var parentIssue = null;
-        var parentIssueDetails = this.getJira().getParent(issue);
-        if (!parentIssueDetails) {
-            parentIssue = issue;
-        } else {
-            parentIssue = parentIssueDetails.key;
-            var summary = parentIssueDetails.fields.summary;
-            this.notifyUser(App.formatIssueKeyForLog(issue)+' is a sub-task of '+App.formatIssueKeyForLog(parentIssue)+' ('+summary+')');
-        }
-
-        var subTaskIssue = this.getJira().getIssueSubTask(parentIssue, subtask);
-        if (!subTaskIssue) {
-            subTaskIssue = this.getJira().createSubTask(parentIssue, subtask);
-            if (!subTaskIssue) {
-                this.alertUser('Failed to log '+time+' against '+App.formatIssueKeyForLog(issue)+': no subtask key was returned by JIRA!');
-                return false;
-            }
-
-            this.notifyUser(subtask+' sub-task ('+App.formatIssueKeyForLog(subTaskIssue)+') was created against '+App.formatIssueKeyForLog(parentIssue));
-        }
-
-        workLogID = this.getJira().logTime(time, subTaskIssue, description);
+        workLogID = this.getJira().logTime(time, issue, description);
         if (!workLogID) {
             this.alertUser('Failed to log '+time+' against '+App.formatIssueKeyForLog(issue)+': no work log was returned by JIRA!');
             return false;
         }
 
-        this.notifyUser(time+' was successfully logged against '+subtask+' of '+App.formatIssueKeyForLog(parentIssue));
-
-        if (close) {
-            var issueToClose = '';
-            var transition = '';
-            if (subTaskIssue) {
-                issueToClose = subTaskIssue;
-                transition = this.getConfig().get('subTaskCloseTransition');
-            } else {
-                issueToClose = issue;
-                transition = this.getConfig().get('mainTaskCloseTransition');
-            }
-            this.resolveCloseIssue(issueToClose, transition);
+        var notification = time+' was successfully logged against '+App.formatIssueKeyForLog(issue);
+        if (logAdditional) {
+            notification += ' ('+logAdditional+')';
         }
+        this.notifyUser(notification);
 
         this.addToLoggedTotal(this.jiraTimeToStopwatchTime(time));
-
         this.getEventDispatcher().timeLogged(time);
-        return true;
-    };
-
-    /**
-     * Resolve or close an issue in Jira
-     *
-     * @param String issue The JIRA issue key
-     * @param String transition The JIRA transition name
-     * @returns Boolean Success?
-     */
-    App.prototype.resolveCloseIssue = function(issue, transition)
-    {
-        var transitionID = this.getJira().getTransitionID(issue, transition);
-        if (!transitionID) {
-            this.warnUser('Could not find '+transition+' transition in JIRA!\nIt\'s likely that the issue is already resolved/closed.');
-            return false;
-        }
-
-        var transitionSuccess = this.getJira().transitionIssue(issue, transitionID);
-        if (!transitionSuccess) {
-            this.alertUser('Could not resolve/close '+issue+' in JIRA!');
-            return false;
-        }
-
-        this.notifyUser(App.formatIssueKeyForLog(issue)+' was successfully resolved/closed');
+        
         return true;
     };
 
@@ -487,10 +405,6 @@ define([
      */
     App.prototype.stopwatchTimeToJiraTime = function(time)
     {
-        if (!(time instanceof StopwatchTime)) {
-            throw 'App.stopwatchTimeToJiraTime called with non-StopwatchTime';
-        }
-
         var jiraTime = '';
         if (time.hour) {
             jiraTime = time.hour+'h ';
@@ -611,10 +525,6 @@ define([
      */
     App.prototype.addToLoggedTotal = function(time)
     {
-        if (!(time instanceof StopwatchTime)) {
-            throw 'App.addToLoggedTotal called with non-StopwatchTime';
-        }
-
         var loggedTotal = this.getLoggedTotal();
         loggedTotal.hour += parseInt(time.hour);
 

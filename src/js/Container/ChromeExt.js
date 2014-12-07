@@ -33,7 +33,7 @@ define([
      *
      * @returns App
      */
-    Abstract.prototype.getAppInstance = function()
+    ChromeExt.prototype.getAppInstance = function()
     {
         return chrome.extension.getBackgroundPage().appInstance;
     };
@@ -43,7 +43,7 @@ define([
      *
      * @returns Config
      */
-    Abstract.getConfigInstance = function()
+    ChromeExt.getConfigInstance = function()
     {
         return chrome.extension.getBackgroundPage().configInstance;
     };
@@ -121,7 +121,7 @@ define([
      * @param String name
      * @param Array additional Zero or more items to pass to the listeners
      */
-    Abstract.prototype.dispatchEvent = function(name, additional)
+    ChromeExt.prototype.dispatchEvent = function(name, additional)
     {
         chrome.runtime.sendMessage({
             type: name,
@@ -139,7 +139,7 @@ define([
      * @param String name
      * @param Function callback
      */
-    Abstract.prototype.registerCustomEventListener = function(name, callback)
+    ChromeExt.prototype.registerCustomEventListener = function(name, callback)
     {
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
         {

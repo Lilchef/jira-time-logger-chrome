@@ -87,9 +87,6 @@ define([
             if (!name) {
                 return true;
             }
-            if (name == 'subTaskTypeExclusions') {
-                val = val.replace(/,\s+/g, ',').split(',');
-            }
             values[name] = val;
         });
 

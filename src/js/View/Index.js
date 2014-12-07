@@ -111,8 +111,7 @@ define([
         var self = this;
         $(document).ready(function()
         {
-            self._populateSubTaskTypes()
-                ._populateActivityLog()
+            self._populateActivityLog()
                 ._setVersion()
                 ._setCopyrightYear()
                 .updateTimeAuto()
@@ -316,9 +315,6 @@ define([
         $('#loggerForm li.danger').removeClass('danger');
         $('#summary').html('&nbsp;');
         $('#loggerForm').get(0).reset();
-        if ($('#closeLabel').hasClass('checked')) {
-            $('#closeLabel').click();
-        }
         this.showTimeAuto();
     };
 
@@ -442,30 +438,6 @@ define([
         for (var index in logs) {
             this.addActivityLog(logs[index], animate);
         }
-        return this;
-    };
-
-    /**
-     * Populate the subtask types dropdown
-     *
-     * @returns self
-     * @private
-     */
-    Index.prototype._populateSubTaskTypes = function()
-    {
-        var subTaskTypes = this.getApp().getSubTaskTypes();
-        $('#type').empty();
-        if (!subTaskTypes) {
-            $('#type').append('<option value="ERROR">ERROR</option>\n');
-            this.getApp().alertUser('Could not load subtask types from JIRA!');
-            return;
-        }
-        $('#type').append('<option value="">Main Issue</option>\n');
-        for (var id in subTaskTypes) {
-            var name = subTaskTypes[id];
-            $('#type').append('<option value="'+name+'">'+name+'</option>\n');
-        }
-
         return this;
     };
 

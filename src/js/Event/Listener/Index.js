@@ -310,7 +310,7 @@ define([
             // No errors, submit
             var values = view.getTimeFormValues();
             var success = app.logTime(
-                values.time, values.issue.toUpperCase(), values.type, values.close, values.description, values.summary
+                values.time, values.issue.toUpperCase(), values.description, values.summary
             );
             if (!success) {
                 return false;

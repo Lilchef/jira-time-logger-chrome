@@ -42,7 +42,6 @@ See the [usage instructions](https://github.com/Lilchef/jira-time-logger-chrome/
 
 ## Known Issues ##
 * Will only work with OnDemand JIRA instances with an `atlassian.net` address
-* The 'Type of work' and 'Resolve/close issue' sections do not work and will shortly be removed
 * Clicking 'Reconfigure' and changing the settings will cause the app to reload and any accrued time will be lost
 
 See [bugs in the issues section](https://github.com/Lilchef/jira-time-logger-chrome/issues?labels=bug&page=1&state=open) for more.

@@ -345,18 +345,12 @@ define([
         var minChanged = false;
         var hourChanged = false;
 
-        if (time.sec) {
-            currTime.sec -= time.sec;
-            secChanged = true;
+        if (time.hour) {
+            currTime.hour -= time.hour;
+            hourChanged = true;
 
-            if (currTime.sec < 0) {
-                if (currTime.min > 0) {
-                    currTime.sec += 60;
-                    currTime.min--;
-                    minChanged = true;
-                } else {
-                    currTime.sec = 0;
-                }
+            if (currTime.hour < 0) {
+                currTime.hour = 0;
             }
         }
         if (time.min) {
@@ -373,12 +367,18 @@ define([
                 }
             }
         }
-        if (time.hour) {
-            currTime.hour -= time.hour;
-            hourChanged = true;
+        if (time.sec) {
+            currTime.sec -= time.sec;
+            secChanged = true;
 
-            if (currTime.hour < 0) {
-                currTime.hour = 0;
+            if (currTime.sec < 0) {
+                if (currTime.min > 0) {
+                    currTime.sec += 60;
+                    currTime.min--;
+                    minChanged = true;
+                } else {
+                    currTime.sec = 0;
+                }
             }
         }
 

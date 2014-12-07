@@ -161,10 +161,6 @@ define([
      */
     Config.prototype.init = function(forContext)
     {
-        if (!(this.getStorage() instanceof StorageAbstract)) {
-            throw 'Storage class used with Config must extend Storage/Abstract';
-        }
-
         var self = this;
         var defaultJson = this.getDefaultJson();
         this.getStorage().fetch('config', function(customJson)
