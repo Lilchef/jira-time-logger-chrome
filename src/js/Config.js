@@ -10,7 +10,7 @@
 define([
     'Container/Factory',
     'Storage/Abstract',
-    'Storage/ChromeExt',
+    'Storage/Factory',
     'Event/Dispatcher/Config',
     'Logger',
     'ConfigConstants',
@@ -18,7 +18,7 @@ define([
 ], function(
     containerFactory,
     StorageAbstract,
-    storage,
+    storageFactory,
     eventDispatcher,
     logger,
     Constants,
@@ -36,6 +36,11 @@ define([
          * @private
          */
         var container = containerFactory.get();
+        /**
+         * @type Storage/Abstract
+         * @private
+         */
+        var storage = storageFactory.get();
         /**
          * @type Object
          * @private

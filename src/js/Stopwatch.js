@@ -21,10 +21,15 @@ define([
     function Stopwatch()
     {
         /**
-         * @type StopwatchTime
+         * @type Date
          * @private
          */
-        var time = null;
+        var start = null;
+        /**
+         * @type Date
+         * @private
+         */
+        var end = null;
         /**
          * @type Integer
          * @private
@@ -34,41 +39,51 @@ define([
          * @type Array
          * @private
          */
-        var secListeners = [];
-        /**
-         * @type Array
-         * @private
-         */
-        var minListeners = [];
-        /**
-         * @type Array
-         * @private
-         */
-        var hourListeners = [];
+        var listeners = [];
 
         /**
-         * Get the time
+         * Get the start time
          *
-         * @returns StopwatchTime
+         * @returns Date
+         * @private
          */
-        this.getTime = function()
+        this.getStart = function()
         {
-            return time;
+            return start;
         };
 
         /**
-         * Set the time
+         * Set the start time
          *
-         * @param StopwatchTime newTime
+         * @param Date newStart
          * @returns self
-         * @throws error if passed anything other than a StopwatchTime
          */
-        this.setTime = function(newTime)
+        this.setStart = function(newStart)
         {
-            if (!(newTime instanceof StopwatchTime)) {
-                throw 'Stopwatch.setTime called with non-StopwatchTime';
-            }
-            time = newTime;
+            start = newStart;
+            return this;
+        };
+
+        /**
+         * Get the end time
+         *
+         * @returns Date
+         * @private
+         */
+        this.getEnd = function()
+        {
+            return end;
+        };
+
+        /**
+         * Set the end time
+         *
+         * @param Date newEnd
+         * @returns self
+         */
+        this.setEnd = function(newEnd)
+        {
+            end = newEnd;
             return this;
         };
 
@@ -106,111 +121,39 @@ define([
         };
 
         /**
-         * Get the second listeners
+         * Get the listeners
          *
          * @returns Array
          */
-        this.getSecListeners = function()
+        this.getListeners = function()
         {
-            return secListeners;
+            return listeners;
         };
 
         /**
-         * Add a second listener
+         * Add a listener
          *
          * @param function
          * @returns self
          * @throws error if passed anything other than a function
          */
-        this.addSecListener = function(listener)
+        this.addListener = function(listener)
         {
             if (!(listener instanceof Function)) {
                 throw 'Stopwatch.addListener called with non-Function';
             }
-            secListeners.push(listener);
+            listeners.push(listener);
             return this;
         };
 
         /**
-         * Check if there are some second listeners
+         * Check if there are some listeners
          *
          * @returns Boolean
          */
-        this.hasSecListeners = function()
+        this.hasListeners = function()
         {
-            return (secListeners.length > 0);
-        };
-
-        /**
-         * Get the minute listeners
-         *
-         * @returns Array
-         */
-        this.getMinListeners = function()
-        {
-            return minListeners;
-        };
-
-        /**
-         * Add a minute listener
-         *
-         * @param function
-         * @returns self
-         * @throws error if passed anything other than a function
-         */
-        this.addMinListener = function(listener)
-        {
-            if (!(listener instanceof Function)) {
-                throw 'Stopwatch.addListener called with non-Function';
-            }
-            minListeners.push(listener);
-            return this;
-        };
-
-        /**
-         * Check if there are some minute listeners
-         *
-         * @returns Boolean
-         */
-        this.hasMinListeners = function()
-        {
-            return (minListeners.length > 0);
-        };
-
-        /**
-         * Get the hour listeners
-         *
-         * @returns Array
-         */
-        this.getHourListeners = function()
-        {
-            return hourListeners;
-        };
-
-        /**
-         * Add a hour listener
-         *
-         * @param function
-         * @returns self
-         * @throws error if passed anything other than a function
-         */
-        this.addHourListener = function(listener)
-        {
-            if (!(listener instanceof Function)) {
-                throw 'Stopwatch.addListener called with non-Function';
-            }
-            hourListeners.push(listener);
-            return this;
-        };
-
-        /**
-         * Check if there are some hour listeners
-         *
-         * @returns Boolean
-         */
-        this.hasHourListeners = function()
-        {
-            return (hourListeners.length > 0);
+            return (listeners.length > 0);
         };
 
         this.reset();
@@ -226,15 +169,14 @@ define([
         if (this.getInterval()) {
             return this;
         }
-        if (!this.getTime().sec) {
-            this.reset();
-        }
+        this.reset();
+        this.setStart(new Date());
         var self = this;
         var interval = setInterval(function ()
         {
             return self._tick();
         },
-        1000);
+        StopwatchTime.MILLISEC_IN_MIN);
         this.setInterval(interval);
 
         return this;
@@ -255,6 +197,8 @@ define([
         this.clearInterval();
         if (reset) {
             this.reset();
+        } else {
+            this.setEnd(new Date());
         }
 
         return this;
@@ -267,8 +211,8 @@ define([
      */
     Stopwatch.prototype.reset = function()
     {
-        var time = new StopwatchTime();
-        this.setTime(time);
+        this.setStart(null);
+        this.setEnd(null);
 
         return this;
     };
@@ -288,14 +232,22 @@ define([
     };
 
     /**
-     * Get the elapsed time
+     * Get the time passed since start/reset was called
      *
      * @param String (Optional) Either hour or min to round to the nearest of
      * @returns StopwatchTime
      */
     Stopwatch.prototype.getTime = function(round)
     {
-        var time = this.getTime();
+        var start = this.getStart();
+        if (!start) {
+            return new StopwatchTime();
+        }
+        var end = this.getEnd() || new Date();
+        var diffMS = end - start;
+
+        var time = StopwatchTime.fromMilliseconds(diffMS);
+
         if (round) {
             time = this.roundTime(time, round);
         }
@@ -340,60 +292,15 @@ define([
      */
     Stopwatch.prototype.deductTime = function(time)
     {
-        var currTime = this.getTime();
-        var secChanged = false;
-        var minChanged = false;
-        var hourChanged = false;
-
-        if (time.hour) {
-            currTime.hour -= time.hour;
-            hourChanged = true;
-
-            if (currTime.hour < 0) {
-                currTime.hour = 0;
-            }
-        }
-        if (time.min) {
-            currTime.min -= time.min;
-            minChanged = true;
-
-            if (currTime.min < 0) {
-                if (currTime.hour > 0) {
-                    currTime.min += 60;
-                    currTime.hour--;
-                    hourChanged = true;
-                } else {
-                    currTime.min = 0;
-                }
-            }
-        }
-        if (time.sec) {
-            currTime.sec -= time.sec;
-            secChanged = true;
-
-            if (currTime.sec < 0) {
-                if (currTime.min > 0) {
-                    currTime.sec += 60;
-                    currTime.min--;
-                    minChanged = true;
-                } else {
-                    currTime.sec = 0;
-                }
-            }
+        var deductMs = time.toMilliseconds();
+        var newStart = new Date(this.getStart().getTime() + deductMs);
+        var now = new Date();
+        if (newStart.getTime() > now.getTime()) {
+            newStart = now;
         }
 
-        this.setTime(currTime);
-
-        // Listeners
-        if (secChanged) {
-            this._notifySecListeners();
-        }
-        if (minChanged) {
-            this._notifyMinListeners();
-        }
-        if (hourChanged) {
-            this._notifyHourListeners();
-        }
+        this.setStart(newStart);
+        this._notifyListeners();
 
         return this;
     };
@@ -404,94 +311,31 @@ define([
      */
 
     /**
-     * Tick over a second
+     * Tick over an interval period
      *
      * @private
      */
     Stopwatch.prototype._tick = function()
     {
-        var currTime = this.getTime();
-        var secChanged = false;
-        var minChanged = false;
-        var hourChanged = false;
-
-        // Seconds
-        currTime.sec++;
-        secChanged = true;
-
-        // Minutes
-        if (currTime.sec == 60) {
-            currTime.sec = 0;
-            currTime.min++;
-            minChanged = true;
-        }
-
-        // Hours
-        if (currTime.min == 60) {
-            currTime.min = 0;
-            currTime.hour++;
-            hourChanged = true;
-        }
-
-        this.setTime(currTime);
-
-        // Listeners
-        if (secChanged) {
-            this._notifySecListeners();
-        }
-        if (minChanged) {
-            this._notifyMinListeners();
-        }
-        if (hourChanged) {
-            this._notifyHourListeners();
-        }
+        this._notifyListeners();
     };
 
     /**
-     * Notify listeners that the seconds have changed
+     * Notify listeners that time has passed
      *
      * @private
      */
-    Stopwatch.prototype._notifySecListeners = function()
+    Stopwatch.prototype._notifyListeners = function()
     {
-        if (this.hasSecListeners()) {
-            var listeners = this.getSecListeners();
-            for (var count in listeners) {
-                var listener = listeners[count];
-                listener(this.getTime());
-            }
+        if (!this.hasListeners()) {
+            return;
         }
-    };
 
-    /**
-     * Notify listeners that the minutes have changed
-     *
-     * @private
-     */
-    Stopwatch.prototype._notifyMinListeners = function()
-    {
-        if (this.hasMinListeners()) {
-            var listeners = this.getMinListeners();
-            for (var count in listeners) {
-                var listener = listeners[count];
-                listener(this.getTime());
-            }
-        }
-    };
-
-    /**
-     * Notify listeners that the hours have changed
-     *
-     * @private
-     */
-    Stopwatch.prototype._notifyHourListeners = function()
-    {
-        if (this.hasHourListeners()) {
-            var listeners = this.getHourListeners();
-            for (var count in listeners) {
-                var listener = listeners[count];
-                listener(this.getTime());
-            }
+        var time = this.getTime();
+        var listeners = this.getListeners();
+        for (var count in listeners) {
+            var listener = listeners[count];
+            listener(time);
         }
     };
 

@@ -20,7 +20,12 @@ define(["jasq", "mock/Storage", "mock/Container"], function (jasq, mockStorage, 
                         return mockContainer;
                     }
                 },
-                "Storage/ChromeExt": mockStorage,
+                "Storage/Factory": {
+                    get: function()
+                    {
+                        return mockStorage;
+                    }
+                },
                 "json!/config/config.json": {
                     "jira": {
                         "urlBase":  'https://test.atlassian.net',
@@ -66,7 +71,6 @@ define(["jasq", "mock/Storage", "mock/Container"], function (jasq, mockStorage, 
             it("should save", function(config, deps)
             {
                 config.init();
-                var mockStorage = deps["Storage/ChromeExt"];
                 spyOn(mockStorage, 'save').and.callThrough();
                 var callback = jasmine.createSpy('callback');
 

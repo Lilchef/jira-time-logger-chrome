@@ -84,6 +84,7 @@ define([
                 ._registerTimeClickListener()
                 ._registerTimeClearListener()
                 ._registerIssueKeyupListener()
+                ._registerIssuePasteListener()
                 ._registerIssueKeyClickListener()
                 ._registerResetLoggedTotalClickListener();
         });
@@ -392,6 +393,22 @@ define([
     {
         var view = this.getView();
         $('#issue').keyup(function()
+        {
+            view.issueKeyEntered();
+        });
+        return this;
+    };
+
+    /**
+     * Register a listener for paste on the issue field
+     *
+     * @returns self
+     * @private
+     */
+    Index.prototype._registerIssueKeyupListener = function()
+    {
+        var view = this.getView();
+        $('#issue').on('paste', function()
         {
             view.issueKeyEntered();
         });

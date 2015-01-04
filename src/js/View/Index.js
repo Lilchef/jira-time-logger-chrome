@@ -297,7 +297,8 @@ define([
             }
         });
 
-        values.time = (app.getTimeManual() ? $('#timeManual').val() : app.getTimeAutoAsString());
+        var roundToNearest = 'min';
+        values.time = (app.getTimeManual() ? $('#timeManual').val() : app.getTimeAutoAsString(roundToNearest));
         var summary = $('#summary').text();
         if (summary != '' && summary.indexOf(values.issue) < 0 && summary.indexOf('...') < 0) {
             values.summary = summary;
@@ -377,20 +378,6 @@ define([
         time = time || this.getApp().getTimeAutoAsString();
         $('.timeAuto').text(time);
         return this;
-    };
-
-    /**
-     * Get the time to log
-     *
-     * @returns String
-     */
-    Index.prototype.getTimeToLog = function()
-    {
-        if (this.getTimeManual()) {
-            return $('#timeManual').val();
-        } else {
-            return this.getTimeAutoAsString();
-        }
     };
 
     /*

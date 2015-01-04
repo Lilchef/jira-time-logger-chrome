@@ -344,7 +344,7 @@ define([
 
         this.resetLoggedTotal();
         var self = this;
-        this.getStopwatch().addMinListener(function()
+        this.getStopwatch().addListener(function()
         {
             self.updateTime();
         });
@@ -495,11 +495,11 @@ define([
     /**
      * Get the accrued time as a JIRA time string
      *
+     * @param String roundToNearest 'min' or 'hour' (or neither)
      * @returns String JIRA time phrase
      */
-    App.prototype.getTimeAutoAsString = function()
+    App.prototype.getTimeAutoAsString = function(roundToNearest)
     {
-        var roundToNearest = 'min';
         var time = this.getStopwatch().getTime(roundToNearest);
         var jiraTime = this.stopwatchTimeToJiraTime(time);
         return jiraTime;

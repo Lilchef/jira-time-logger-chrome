@@ -17,6 +17,7 @@ define(["Stopwatch", "StopwatchTime"], function (stopwatch, StopwatchTime)
         beforeEach(function()
         {
             jasmine.clock().install();
+            jasmine.clock().mockDate();
         });
 
         afterEach(function()
@@ -100,11 +101,11 @@ define(["Stopwatch", "StopwatchTime"], function (stopwatch, StopwatchTime)
 
         it("should deduct time", function()
         {
-            var setTime = new StopwatchTime();
-            setTime.sec = 2;
-            setTime.min = 2;
-            setTime.hour = 2;
-            stopwatch.setTime(setTime);
+            stopwatch.start();
+            var timeToPass = (2 * StopwatchTime.MILLISEC_IN_HOUR) + (2 * StopwatchTime.MILLISEC_IN_MIN) + (2 * StopwatchTime.MILLISEC_IN_SEC) + 1;
+            jasmine.clock().tick(timeToPass);
+            var time = stopwatch.getTime();
+            expectTime(time, 2, 2, 2);
 
             var deduct = new StopwatchTime();
             deduct.sec = 1;
@@ -113,19 +114,15 @@ define(["Stopwatch", "StopwatchTime"], function (stopwatch, StopwatchTime)
             stopwatch.deductTime(deduct);
             var time = stopwatch.getTime();
             expectTime(time, 1, 1, 1);
-
-            deduct.sec = 0;
-            deduct.min = 10;
-            deduct.hour = 0;
         });
 
         it("should deduct time and account for hour change", function()
         {
-            var setTime = new StopwatchTime();
-            setTime.sec = 0;
-            setTime.min = 0;
-            setTime.hour = 1;
-            stopwatch.setTime(setTime);
+            stopwatch.start();
+            var timeToPass = (1 * StopwatchTime.MILLISEC_IN_HOUR) + 1;
+            jasmine.clock().tick(timeToPass);
+            var time = stopwatch.getTime();
+            expectTime(time, 0, 0, 1);
 
             var deduct = new StopwatchTime();
             deduct.min = 10;
@@ -136,11 +133,11 @@ define(["Stopwatch", "StopwatchTime"], function (stopwatch, StopwatchTime)
 
         it("should deduct time without going past zero", function()
         {
-            var setTime = new StopwatchTime();
-            setTime.sec = 0;
-            setTime.min = 0;
-            setTime.hour = 1;
-            stopwatch.setTime(setTime);
+            stopwatch.start();
+            var timeToPass = (1 * StopwatchTime.MILLISEC_IN_HOUR) + 1;
+            jasmine.clock().tick(timeToPass);
+            var time = stopwatch.getTime();
+            expectTime(time, 0, 0, 1);
 
             var deduct = new StopwatchTime();
             deduct.min = 1;
@@ -153,7 +150,7 @@ define(["Stopwatch", "StopwatchTime"], function (stopwatch, StopwatchTime)
         it("should notify listeners on minute change", function()
         {
             var listener = jasmine.createSpy('listener');
-            stopwatch.addMinListener(listener);
+            stopwatch.addListener(listener);
             stopwatch.start();
 
             jasmine.clock().tick(59000);
@@ -163,23 +160,6 @@ define(["Stopwatch", "StopwatchTime"], function (stopwatch, StopwatchTime)
             expect(listener).toHaveBeenCalled();
 
             jasmine.clock().tick(60000);
-            expect(listener.calls.count()).toEqual(2);
-        });
-
-        it("should notify listeners on hour change", function()
-        {
-            var listener = jasmine.createSpy('listener');
-            stopwatch.addHourListener(listener);
-            stopwatch.start();
-
-            // 35400ms === 59m
-            jasmine.clock().tick(3540000);
-            expect(listener).not.toHaveBeenCalled();
-
-            jasmine.clock().tick(60001);
-            expect(listener).toHaveBeenCalled();
-
-            jasmine.clock().tick(3600000);
             expect(listener.calls.count()).toEqual(2);
         });
 
