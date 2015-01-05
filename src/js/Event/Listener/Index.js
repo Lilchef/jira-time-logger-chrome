@@ -405,7 +405,7 @@ define([
      * @returns self
      * @private
      */
-    Index.prototype._registerIssueKeyupListener = function()
+    Index.prototype._registerIssuePasteListener = function()
     {
         var view = this.getView();
         $('#issue').on('paste', function()

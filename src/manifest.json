@@ -3,7 +3,7 @@
 
     "name": "JIRA Time Logger",
     "description": "Easily keep track of and log time against your JIRA tickets",
-    "version": "2.1.1",
+    "version": "2.1.2",
 
     "options_page": "config.html",
     "background": {
