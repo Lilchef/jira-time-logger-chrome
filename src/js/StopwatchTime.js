@@ -85,5 +85,13 @@ define([], function()
         return ms;
     };
 
+    Time.prototype.toWholeMinutes = function()
+    {
+        var mins = 0;
+        mins += this.min;
+        mins += this.hour * 60;
+        return mins;
+    };
+
     return StopwatchTime;
 });

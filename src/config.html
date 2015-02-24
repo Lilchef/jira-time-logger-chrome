@@ -48,6 +48,24 @@
                 </ul>
             </div>
             <div class="row">
+                <ul class="three columns">
+                    <li class="field">
+                        <label for="defaultProjectKey">Default Project Key</label>
+                    </li>
+                    <li class="field">
+                        <label for="reminderFrequency">Reminder notifications frequency (in minutes, 0 to turn off)</label>
+                    </li>
+                </ul>
+                <ul class="three columns">
+                    <li class="field">
+                        <input type="text" id="defaultProjectKey" name="jtl.defaultProjectKey" class="text input" placeholder="JIRA project key to use by default" />
+                    </li>
+                    <li class="field">
+                        <input type="text" id="reminderFrequency" name="jtl.reminderFrequency" class="text input" placeholder="e.g.: 30" />
+                    </li>
+                </ul>
+            </div>
+            <div class="row">
                 <div class="six columns text-center">
                     <div class="medium rounded pretty success btn icon-left icon-check">
                         <input type="submit" id="configureButton" value="Submit" />

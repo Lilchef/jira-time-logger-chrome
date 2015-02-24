@@ -11,12 +11,14 @@ define([
     'jqueryColor',
     'Container/Factory',
     'ActivityLog',
-    'JiraConstants'
+    'JiraConstants',
+    'Config'
 ], function(
     $,
     containerFactory,
     AL,
-    JiraConstants
+    JiraConstants,
+    config
 ) {
 
     /**
@@ -91,6 +93,16 @@ define([
         this.getApp = function()
         {
             return containerFactory.get().getAppInstance();
+        };
+
+        /**
+         * Get the config
+         *
+         * @returns Config
+         */
+        this.getConfig = function()
+        {
+            return config;
         };
     }
 
@@ -214,21 +226,27 @@ define([
         if (this.getIssueTimeout()) {
             clearTimeout(this.getIssueTimeout());
         }
-        $('#summary').text('Waiting...');
-        var app = this.getApp();
+        $('#summary').text('*Waiting...*');
+        var self = this;
         var issueTimeout = setTimeout(function()
         {
-            if (!$('#issue').val().match(new RegExp(JiraConstants.ISSUE_KEY_REGEX)) || $('#issue').val() == '') {
-                $('#issue').parent().addClass('danger');
-                $('#summary').html('&nbsp;');
+            var issueKey = $('#issue').val();
+            if (issueKey.match(new RegExp(JiraConstants.ISSUE_KEY_REGEX))) {
+                self._checkIssueKey(issueKey);
                 return;
             }
+            if ($.isNumeric(issueKey)) {
+                var defaultProjectKey = self.getConfig().get('defaultProjectKey', 'jtl');
+                if (defaultProjectKey) {
+                    issueKey = defaultProjectKey + '-' + issueKey;
+                    $('#issue').val(issueKey);
+                    self._checkIssueKey(issueKey);
+                    return;
+                }
+            }
 
-            $('#issue').parent().removeClass('danger');
-            $('#summary').text('Checking...');
-            var summary = app.getIssueSummary($('#issue').val());
-            summary = (summary || $('#issue').val()+' not found');
-            $('#summary').text(summary);
+            $('#issue').parent().addClass('danger');
+            $('#summary').html('*Invalid issue key*');
         }, 500);
         this.setIssueTimeout(issueTimeout);
     };
@@ -425,6 +443,22 @@ define([
         for (var index in logs) {
             this.addActivityLog(logs[index], animate);
         }
+        return this;
+    };
+
+    /**
+     * Check an issue key against JIRA and update the summary info
+     *
+     * @param String issueKey
+     * @returns self
+     */
+    Index.prototype._checkIssueKey = function(issueKey)
+    {
+        $('#issue').parent().removeClass('danger');
+        $('#summary').text('*Checking...*');
+        var summary = this.getApp().getIssueSummary(issueKey);
+        summary = (summary || issueKey + ' not found');
+        $('#summary').text(summary);
         return this;
     };
 

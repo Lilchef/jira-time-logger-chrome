@@ -102,6 +102,19 @@ define([], function()
     };
 
     /**
+     * Show a notification to the user
+     * 
+     * @param String title
+     * @param String message
+     * @param Integer duration
+     * @returns self
+     */
+    Abstract.prototype.showNotification = function(title, message, duration)
+    {
+        throw 'Container/Abstract.showNotification must be overridden';
+    };
+
+    /**
      * Create and dispatch a custom event
      *
      * Can be overriden if a container needs to handle bespoke events differently

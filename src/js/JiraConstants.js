@@ -31,6 +31,7 @@ define([
      */
     JiraConstants.TIME_REGEX = "^([0-9]+[dD] ?)?([0-9]+[hH] ?)?([0-9]+[mM])?$";
     JiraConstants.ISSUE_KEY_REGEX = "^[A-Za-z]{1,10}-[0-9]+$";
+    JiraConstants.PROJECT_KEY_REGEX = "^[A-Za-z]{1,10}$";
 
     /**
      * @constants URLS

@@ -9,10 +9,12 @@
 
 define([
     'jquery',
-    'Config'
+    'Config',
+    'JiraConstants'
 ], function(
     $,
-    config
+    config,
+    JiraConstants
 ) {
 
     /**
@@ -69,6 +71,12 @@ define([
             $('#password').parent().addClass('warning');
             errors.push('Password cannot be blank');
         }
+        if ($('#defaultProjectKey').val() && !$('#defaultProjectKey').val().match(new RegExp(JiraConstants.PROJECT_KEY_REGEX))) {
+            errors.push('Default Project Key must be a valid JIRA project key');
+        }
+        if (!$.isNumeric($('#reminderFrequency').val()) || parseInt($('#reminderFrequency').val()) < 0) {
+            errors.push('Reminder frequency must be a number of zero or more minutes');
+        }
 
         return errors;
     };
@@ -102,13 +110,16 @@ define([
     Config.prototype._populateForm = function()
     {
         var json = this.getConfig().getJson();
-        for (var key in json.jira) {
-            if (json.jira[key] && $('#'+key).length == 1) {
-                var val = this.getConfig().get(key);
-                if (val instanceof Array) {
-                    val = val.join(', ');
+        for (var section in json) {
+            for (var key in json[section]) {
+                var selector = '#configForm [name="'+section+'.'+key+'"]';
+                if (json[section][key] && $(selector).length == 1) {
+                    var val = this.getConfig().get(key, section);
+                    if (val instanceof Array) {
+                        val = val.join(', ');
+                    }
+                    $(selector).val(val);
                 }
-                $('#'+key).val(val);
             }
         }
         return this;

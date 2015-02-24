@@ -21,6 +21,7 @@ require([
     "./spec/Config.js",
     "./spec/Jira.js",
     "./spec/Stopwatch.js",
+    "./spec/Reminder.js",
 ], function () {
     window.jasmine.htmlReporter.initialize();
     window.jasmine.getEnv().execute();

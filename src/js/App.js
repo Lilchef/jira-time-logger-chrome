@@ -18,7 +18,8 @@ define([
     'JiraConstants',
     'Stopwatch',
     'ActivityLog',
-    'StopwatchTime'
+    'StopwatchTime',
+    'Reminder'
 ], function(
     Constants,
     containerFactory,
@@ -29,7 +30,8 @@ define([
     JiraConstants,
     stopwatch,
     ActivityLog,
-    StopwatchTime
+    StopwatchTime,
+    reminder
 ) {
 
     /**
@@ -143,6 +145,16 @@ define([
         this.getStopwatch = function()
         {
             return stopwatch;
+        };
+
+        /**
+         * Get the reminder
+         * 
+         * @returns Reminder
+         */
+        this.getReminder = function()
+        {
+            return reminder;
         };
 
         /**
@@ -344,9 +356,12 @@ define([
 
         this.resetLoggedTotal();
         var self = this;
-        this.getStopwatch().addListener(function()
+        this.getStopwatch().addListener(function(time)
         {
-            self.updateTime();
+            self.updateTime(time);
+            if (self.getReminder().isRequired(time)) {
+                self.getReminder().show(time);
+            }
         });
         this.resetTime();
     };

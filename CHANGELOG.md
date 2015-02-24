@@ -1,5 +1,9 @@
 # Changelog #
 
+## 2.2.0 ##
+* Added notification reminders to log time. Their frequency is configurable, defaulting to every 30mins.
+* Added config option for a default JIRA project key so one can simply enter a number and JTL will prepend the default key
+
 ## 2.1.2 ##
 * Fixed a bug introduced in 2.1.1 that was: preventing the issue summary from updating when an issue key was typed in,
 preventing the click of issue keys in the log being picked up and preventing clicks of the reset logged total button

@@ -6,6 +6,8 @@
         "password": null
     },
     "jtl": {
-        "maxLogs": 50
+        "maxLogs": 50,
+        "defaultProjectKey": null,
+        "reminderFrequency": 30
     }
 }

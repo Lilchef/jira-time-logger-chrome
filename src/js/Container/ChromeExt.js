@@ -116,6 +116,36 @@ define([
     };
 
     /**
+     * Show a notification to the user
+     *
+     * @param String title
+     * @param String message
+     * @param Integer duration
+     * @returns self
+     */
+    ChromeExt.prototype.showNotification = function(title, message, duration)
+    {
+        if (!message) {
+            return;
+        }
+        title = title || 'JTL';
+        chrome.notifications.create('', {
+          title: title,
+          message: message,
+          iconUrl: 'images/jira_time_logger_logo.png',
+          type: 'basic',
+        }, function(notificationId){
+            if (!duration) {
+                return;
+            }
+            setTimeout(function()
+            {
+                chrome.notifications.clear(notificationId, function() {});
+            }, duration);
+        });
+    };
+
+    /**
      * Create and dispatch a custom event
      *
      * @param String name

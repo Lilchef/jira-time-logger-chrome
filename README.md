@@ -10,10 +10,13 @@ It acts as a stopwatch to monitor the length of time you've worked on something 
     + Can be manually entered instead
     + Manual entry can be used to split the time as it is deducted from the accrued time
 * Description can be added for the worklog if desired
+* Once entered issue keys are looked up to show the summary
+    + There's a config option to set a default project key to use so just the numbers of the key can be entered
 * Recent activity is logged for reference
     + Issue keys in the log can be clicked to re-use them
     + Hover over a log entry to see the date and time it was made
 * Total time logged for the day is recorded
+* Shows notification reminders to log time. Their frequency is configurable and they can be turned off if desired
 
 ## Installation ##
 ### Linux & Mac ###
