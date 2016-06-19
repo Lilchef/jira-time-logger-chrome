@@ -36,6 +36,34 @@ define([
         Abstract.call(this);
 
         /**
+         * @type Boolean
+         * @private
+         */
+        var initialised = false;
+
+        /**
+         * Set whether the listner has been initialised.
+         *
+         * @param Boolean val
+         * @returns self
+         */
+        this.setInitialised = function(val)
+        {
+            initialised = val;
+            return this;
+        };
+
+        /**
+         * Has the listener been initialised?
+         *
+         * @returns Boolean
+         */
+        this.isInitialised = function()
+        {
+            return initialised;
+        };
+
+        /**
          * Get the App instance
          *
          * @returns App
@@ -60,10 +88,14 @@ define([
 
     /**
      * Initialise the listeners
-     * 
+     *
      */
     Index.prototype.init = function()
     {
+        // Prevent accidental double-initialisation which would cause everything to be listened to and actioned twice
+        if (this.isInitialised()) {
+            return;
+        }
         var self = this;
         $(document).ready(function()
         {
@@ -88,6 +120,7 @@ define([
                 ._registerIssueKeyClickListener()
                 ._registerResetLoggedTotalClickListener();
         });
+        this.setInitialised(true);
     };
 
     /**
@@ -229,7 +262,7 @@ define([
     Index.prototype._registerReconfigureListener = function()
     {
         var app = this.getApp();
-        $('#reconfigureButton').click(function()
+        $('#reconfigureButton').off('click').on('click', function()
         {
             app.reconfigure();
             // Prevent regular form submission
@@ -247,7 +280,7 @@ define([
     Index.prototype._registerBugListener = function()
     {
         var app = this.getApp();
-        $('#bugButton').click(function()
+        $('#bugButton').off('click').on('click', function()
         {
             app.bugRequest();
         });
@@ -263,7 +296,7 @@ define([
     Index.prototype._registerResetFormListener = function()
     {
         var view = this.getView();
-        $('#resetFormButton').click(function()
+        $('#resetFormButton').off('click').on('click', function()
         {
             view.resetTimeForm(true);
         });
@@ -279,7 +312,7 @@ define([
     Index.prototype._registerLogTimeListener = function()
     {
         var view = this.getView();
-        $('#logTimeButton').click(function()
+        $('#logTimeButton').off('click').on('click', function()
         {
             view.submitTimeForm();
         });
@@ -296,7 +329,7 @@ define([
     {
         var app = this.getApp();
         var view = this.getView();
-        $('#loggerForm').submit(function(e)
+        $('#loggerForm').off('submit').on('submit', function(e)
         {
             // Prevent regular form submission
             e.preventDefault();
@@ -307,7 +340,7 @@ define([
                 app.alertUser(errors.join('\n'));
                 return;
             }
-            
+
             // No errors, submit
             var values = view.getTimeFormValues();
             var success = app.logTime(
@@ -337,7 +370,7 @@ define([
     {
         var app = this.getApp();
         var view = this.getView();
-        $('#timeAuto').click(function()
+        $('#timeAuto').off('click').on('click', function()
         {
             view.showTimeManual();
             app.setTimeManual(true);
@@ -355,7 +388,7 @@ define([
     {
         var app = this.getApp();
         var view = this.getView();
-        $('#clearTimeButton').click(function()
+        $('#clearTimeButton').off('click').on('click', function()
         {
             if (app.getTimeManual()) {
                 view.showTimeAuto();
@@ -376,7 +409,7 @@ define([
     Index.prototype._registerTimeManualKeyupListener = function()
     {
         var view = this.getView();
-        $('#timeManual').keyup(function()
+        $('#timeManual').off('keyup').on('keyup', function()
         {
             view.manualTimeEntered();
         });
@@ -392,7 +425,7 @@ define([
     Index.prototype._registerIssueKeyupListener = function()
     {
         var view = this.getView();
-        $('#issue').keyup(function()
+        $('#issue').off('keyup').on('keyup', function()
         {
             view.issueKeyEntered();
         });
@@ -408,7 +441,7 @@ define([
     Index.prototype._registerIssuePasteListener = function()
     {
         var view = this.getView();
-        $('#issue').on('paste', function()
+        $('#issue').off('paste').on('paste', function()
         {
             view.issueKeyEntered();
         });
@@ -424,7 +457,7 @@ define([
     Index.prototype._registerIssueKeyClickListener = function()
     {
         var view = this.getView();
-        $('body').on('click', 'a.issueKey', function()
+        $('body').off('click.issueKey').on('click.issueKey', 'a.issueKey', function()
         {
             view.enterIssueKey($(this).text());
             return false;
@@ -441,7 +474,7 @@ define([
     Index.prototype._registerResetLoggedTotalClickListener = function()
     {
         var app = this.getApp();
-        $('#resetLoggedTotalButton').click(function()
+        $('#resetLoggedTotalButton').off('click').on('click', function()
         {
             app.resetLoggedTotal(true);
         });

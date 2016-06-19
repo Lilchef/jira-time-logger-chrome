@@ -99,7 +99,7 @@ define([
         var config = this.getConfig();
         var view = this.getView();
         var container = this.getContainer();
-        $('#configForm').submit(function(e) {
+        $('#configForm').off('submit').on('submit', function(e) {
             // Prevent regular form submission
             e.preventDefault();
 

@@ -1,5 +1,8 @@
 # Changelog #
 
+## 2.2.1 ##
+* Fixed a bug introduced by Chrome 49 that prevented the app from initialising which meant the stopwatch did not start automatically.
+
 ## 2.2.0 ##
 * Added notification reminders to log time. Their frequency is configurable, defaulting to every 30mins.
 * Added config option for a default JIRA project key so one can simply enter a number and JTL will prepend the default key

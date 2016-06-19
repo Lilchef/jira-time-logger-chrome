@@ -24,6 +24,48 @@ define([
     function ChromeExt()
     {
         Abstract.call(this);
+
+        /**
+         * @type Object
+         * @private
+         */
+        var listeners = {};
+
+        /**
+         * Get listeners (callbacks) for a given event
+         *
+         * @param string event The name of the event to get listeners for
+         * @returns Array
+         */
+        this.getListenersForEvent = function(event)
+        {
+            if (typeof listeners[event] == 'undefined')
+            {
+                return [];
+            }
+            return listeners[event];
+        };
+
+        /**
+         * Add a listener (callback) for the given event
+         *
+         * @param string event The name of the event to add the listener for
+         * @param Function callback
+         * @returns self
+         */
+        this.addListener = function(event, callback)
+        {
+            if (typeof listeners[event] == 'undefined') {
+                listeners[event] = [];
+            }
+            listeners[event].push(callback);
+            return this;
+        };
+
+        (function()
+        {
+            this.setupMessageListener();
+        }).call(this);
     }
 
     ChromeExt.prototype = Object.create(Abstract.prototype);
@@ -153,6 +195,7 @@ define([
      */
     ChromeExt.prototype.dispatchEvent = function(name, additional)
     {
+        Abstract.prototype.dispatchEvent.call(this, name, additional);
         chrome.runtime.sendMessage({
             type: name,
             data: additional
@@ -171,15 +214,27 @@ define([
      */
     ChromeExt.prototype.registerCustomEventListener = function(name, callback)
     {
+        Abstract.prototype.registerCustomEventListener.call(this, name, callback);
+        this.addListener(name, callback);
+    };
+
+    ChromeExt.prototype.setupMessageListener = function()
+    {
+        var self = this;
         chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)
         {
-            if (request.type !== name) {
+            var listeners = self.getListenersForEvent(request.type);
+            if (!listeners) {
                 return;
             }
             var additional = request.data || [];
             // Replicate normal events by making the first argument to the callback an Event object
             additional.unshift(new Event(name));
-            callback.apply(null, additional);
+            for (var index in listeners)
+            {
+                var callback = listeners[index];
+                callback.apply(null, additional);
+            }
             return true;
         });
     };
