@@ -1,5 +1,11 @@
 # Changelog #
 
+## 3.0.0 ##
+* Converted the extension to an app. This has the following benefits:
+** If Chrome crashes or is closed for any reason the time logger app will still be running.
+** Unlike the extension pop-up the app stays present at all times meaning if you enter something into the form, tab out then tab back it will still be there.
+** Re-configuring no longer causes the app to reset
+
 ## 2.2.1 ##
 * Fixed a bug introduced by Chrome 49 that prevented the app from initialising which meant the stopwatch did not start automatically.
 

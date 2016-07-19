@@ -1,27 +1,25 @@
 {
     "manifest_version": 2,
+    "minimum_chrome_version": "45",
 
     "name": "JIRA Time Logger",
     "description": "Easily keep track of and log time against your JIRA tickets",
-    "version": "2.2.1",
+    "version": "3.0.0",
 
-    "options_page": "config.html",
-    "background": {
-        "persistent": true,
-        "scripts": [
-            "js/require.js",
-            "js/require-setup.js",
-            "js/index.js"
-        ]
-    },
-    "browser_action": {
-        "default_icon": "images/jira_time_logger_logo.png",
-        "default_popup": "index.html"
+    "app": {
+        "background": {
+            "scripts": [
+                "js/require.js",
+                "js/require-setup.js",
+                "js/index.js"
+            ]
+        }
     },
     "icons": {
         "128": "images/jira_time_logger_logo.png"
     },
     "permissions": [
+        "browser",
         "storage",
         "notifications",
         "https://*.atlassian.net/",

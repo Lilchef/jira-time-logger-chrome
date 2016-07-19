@@ -1,15 +1,14 @@
 /**
  * app.js file
- * 
+ *
  * Contains the App class.
  * Requires the Config class.
- * 
+ *
  * @author Aaron Baker <me@aaronbaker.co.uk>
  * @copyright Aaron Baker 2013
  */
 
 define([
-    'AppConstants',
     'Container/Factory',
     'Logger',
     'Config',
@@ -21,7 +20,6 @@ define([
     'StopwatchTime',
     'Reminder'
 ], function(
-    Constants,
     containerFactory,
     logger,
     config,
@@ -69,7 +67,7 @@ define([
 
          /**
           * Get the container
-          * 
+          *
           * @returns Container/Abstract
           */
          this.getContainer = function()
@@ -149,7 +147,7 @@ define([
 
         /**
          * Get the reminder
-         * 
+         *
          * @returns Reminder
          */
         this.getReminder = function()
@@ -300,12 +298,6 @@ define([
     {
         var log = new ActivityLog(message, ActivityLog.LEVEL_ERROR);
         this.addActivityLog(log);
-
-        // Strip tags for the alert box
-        var tmp = document.createElement("DIV");
-        tmp.innerHTML = message;
-        var plainTextMessage = tmp.textContent || tmp.innerText || "";
-        alert(plainTextMessage);
     };
 
     /**
@@ -347,15 +339,8 @@ define([
      */
     App.prototype.start = function()
     {
-        // See if config needs setting
-        if (!this._testConfig()) {
-            this.alertUser('Connection to JIRA failed, please check your settings are correct then try again');
-            this.reconfigure();
-            return;
-        }
-
-        this.resetLoggedTotal();
         var self = this;
+        this.resetLoggedTotal();
         this.getStopwatch().addListener(function(time)
         {
             self.updateTime(time);
@@ -364,6 +349,19 @@ define([
             }
         });
         this.resetTime();
+
+        // See if config needs setting
+        this._testConfig();
+    };
+
+    App.prototype.configChanged = function()
+    {
+        var self = this;
+        // The config will have been changed in the UI context, need to reload the version in the background page
+        this.getConfig().load(function()
+        {
+            self._testConfig();
+        });
     };
 
     /**
@@ -372,13 +370,16 @@ define([
      * @param String issue The JIRA issue key
      * @returns String The summary line OR null
      */
-    App.prototype.getIssueSummary = function(issue)
+    App.prototype.getIssueSummary = function(issue, callback)
     {
-        var details = this.getJira().getIssueSummary(issue);
-        if (details && details.fields.summary) {
-            return details.fields.summary;
-        }
-        return null;
+        var details = this.getJira().getIssueSummary(issue, function(details)
+        {
+            var summary = null;
+            if (details && details.fields.summary) {
+                summary = details.fields.summary;
+            }
+            callback(summary);
+        });
     };
 
     /**
@@ -390,14 +391,20 @@ define([
      * @param String logAdditional (Optional) Extra text to add on to the ActivityLog message
      * @return Boolean Success?
      */
-    App.prototype.logTime = function(time, issue, description, logAdditional)
+    App.prototype.logTime = function(time, issue, description, logAdditional, callback)
     {
-        var workLogID = null;
+        var self = this;
+        this.getJira().logTime(time, issue, description, function(workLogID)
+        {
+            self.timeLogged(time, issue, description, logAdditional, callback, workLogID);
+        });
+    };
 
-        workLogID = this.getJira().logTime(time, issue, description);
+    App.prototype.timeLogged = function(time, issue, description, logAdditional, callback, workLogID)
+    {
         if (!workLogID) {
             this.alertUser('Failed to log '+time+' against '+App.formatIssueKeyForLog(issue)+': no work log was returned by JIRA!');
-            return false;
+            callback(false);
         }
 
         var notification = time+' was successfully logged against '+App.formatIssueKeyForLog(issue);
@@ -408,8 +415,8 @@ define([
 
         this.addToLoggedTotal(this.jiraTimeToStopwatchTime(time));
         this.getEventDispatcher().timeLogged(time);
-        
-        return true;
+
+        callback(true);
     };
 
     /**
@@ -485,14 +492,6 @@ define([
         this.updateTime();
         if (log && currTime && (currTime.min || currTime.hour)) {
             this.notifyUser('The accrued time has been reset ('+this.stopwatchTimeToJiraTime(currTime)+' dropped)');
-        }
-
-        // If it looks like the time logger's been running overnight offer to reset the day total
-        if (currTime.hour >= Constants.TIME_HOUR_LIMIT) {
-            var resetLoggedTotal = confirm("It looks like this is a new day,\ndo you want to reset the logged total as well?");
-            if (resetLoggedTotal) {
-                this.resetLoggedTotal(log);
-            }
         }
     };
 
@@ -666,23 +665,40 @@ define([
     /**
      * Check the configuration is correct
      *
-     * @return Boolean Config correct?
+     * @return Promise
      * @private
      */
     App.prototype._testConfig = function()
     {
-        if (!this.getConfig().ready()) {
-            return false;
-        }
-        
-        this.getEventDispatcher().testingJiraConnection();
-        if (!this.getJira().testConnection()) {
-            this.getEventDispatcher().doneTestingJiraConnection();
-            return false;
-        }
+        var self = this;
+        var promise = new Promise(function(resolve, reject)
+        {
+            if (!self.getConfig().ready()) {
+                reject(new Error('Config not ready'));
+                return;
+            }
 
-        this.getEventDispatcher().doneTestingJiraConnection();
-        return true;
+            self.getEventDispatcher().testingJiraConnection();
+            self.getJira().testConnection(function(success)
+            {
+                self.getEventDispatcher().doneTestingJiraConnection();
+                if (success) {
+                    resolve();
+                } else {
+                    reject(new Error('JIRA connection failed'));
+                }
+            });
+        });
+        promise.then(function()
+        {
+            self.notifyUser('Connected to JIRA successfully');
+        }, function(error)
+        {
+            self.getLogger().error('Config problem: '+error);
+            self.alertUser('Connection to JIRA failed, please check your settings are correct then try again');
+            self.reconfigure();
+        });
+        return promise;
     };
 
     return App.getInstance();

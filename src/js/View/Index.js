@@ -42,6 +42,12 @@ define([
         var issueTimeout = null;
 
         /**
+         * @type Container/Abstract
+         * @private
+         */
+        var container = containerFactory.get();
+
+        /**
          * Get the manual time timeout
          *
          * @return Integer
@@ -86,13 +92,23 @@ define([
         };
 
         /**
+         * Get the container instance
+         *
+         * @returns Container/Abstract
+         */
+        this.getContainer = function()
+        {
+            return container;
+        };
+
+        /**
          * Get the Application instance
          *
          * @returns App
          */
         this.getApp = function()
         {
-            return containerFactory.get().getAppInstance();
+            return this.getContainer().getAppInstance();
         };
 
         /**
@@ -151,12 +167,13 @@ define([
 
         var userLog = $('<div class="userLog '+level.toLowerCase()+'" title="'+dateTimeLogged+'">'+level+': '+message+'</div>');
         $('#userLogContainer').prepend(userLog).scrollTop(0);
-        if (animate) {
-            var colour = Index.AL_COLOUR_MAP[level];
-            userLog.css({backgroundColor: colour})
-                    .show()
-                    .animate({backgroundColor: 'none'}, 1500);
+        if (!animate) {
+            return;
         }
+        var colour = Index.AL_COLOUR_MAP[level];
+        userLog.css({backgroundColor: colour})
+                .show()
+                .animate({backgroundColor: 'none'}, 1500);
     };
 
     /**
@@ -199,7 +216,7 @@ define([
 
     /**
      * Handle a time being manually entered
-     * 
+     *
      */
     Index.prototype.manualTimeEntered = function()
     {
@@ -345,7 +362,7 @@ define([
     {
         var mask = '<div id="mask">'
         mask += '<div id="maskText">Testing JIRA connection, please wait<br />';
-        mask += '<img src="app://images/spinner.gif" alt="*" width="16" height="16" /></div>';
+        mask += '<img src="images/spinner.gif" alt="*" width="16" height="16" /></div>';
         mask += '</div>';
         $('body').append(mask);
     };
@@ -396,6 +413,28 @@ define([
         time = time || this.getApp().getTimeAutoAsString();
         $('.timeAuto').text(time);
         return this;
+    };
+
+    /**
+     * React to the config being changed
+     */
+    Index.prototype.configChanged = function()
+    {
+        this.getConfig().load();
+    };
+
+    /**
+     * Show a confirmation asking the user if they want to reset the total logged time
+     */
+    Index.prototype.confirmLoggedTimeReset = function()
+    {
+        var app = this.getApp();
+        this.getContainer().confirm(
+            "It looks like this is a new day,\ndo you want to reset the logged total as well?",
+            function() {
+                app.resetLoggedTotal(true);
+            }
+        );
     };
 
     /*
@@ -456,9 +495,11 @@ define([
     {
         $('#issue').parent().removeClass('danger');
         $('#summary').text('*Checking...*');
-        var summary = this.getApp().getIssueSummary(issueKey);
-        summary = (summary || issueKey + ' not found');
-        $('#summary').text(summary);
+        var summary = this.getApp().getIssueSummary(issueKey, function(summary)
+        {
+            summary = (summary || issueKey + ' not found');
+            $('#summary').text(summary);
+        });
         return this;
     };
 

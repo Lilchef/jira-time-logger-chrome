@@ -56,7 +56,7 @@ define([], function()
 
     /**
      * Show the configuration options
-     * 
+     *
      */
     Abstract.prototype.showConfiguration = function()
     {
@@ -74,7 +74,7 @@ define([], function()
 
     /**
      * Handle a configuration change
-     * 
+     *
      */
     Abstract.prototype.configurationChanged = function()
     {
@@ -103,7 +103,7 @@ define([], function()
 
     /**
      * Show a notification to the user
-     * 
+     *
      * @param String title
      * @param String message
      * @param Integer duration
@@ -142,6 +142,33 @@ define([], function()
     Abstract.prototype.registerCustomEventListener = function(name, callback)
     {
         document.addEventListener(name, callback);
+    };
+
+    /**
+     * Ask the user to confirm an action
+     *
+     * @param String message
+     * @param function yesCallback (Optional)
+     * @param function noCallback (Optional)
+     */
+    Abstract.prototype.confirm = function(message, yesCallback, noCallback)
+    {
+        var result = confirm(message);
+        if (result && yesCallback) {
+            yesCallback();
+        } else if (noCallback) {
+            noCallback();
+        }
+    };
+
+    /**
+     * Perform any initilisation required by the container
+     *
+     * @param Function callback
+     */
+    Abstract.prototype.initialise = function(callback)
+    {
+        callback();
     };
 
     // Child classes should return a singleton here

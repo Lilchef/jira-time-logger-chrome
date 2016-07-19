@@ -1,5 +1,6 @@
 body
 {
+    font-family: "Open Sans", "Verdana", "Tahoma", "Arial";
     background-color: #EEE;
     min-width: 500px;
 }
@@ -137,11 +138,15 @@ li.field.danger:after
     font-size: 0.6rem;
 }
 
-#footer i[class^="icon-"], 
+#footer i[class^="icon-"],
 #footer i[class*=" icon-"]
 {
     min-width: auto;
     margin: 0px;
     font-size: 1rem;
     display: inline;
+}
+
+#confirmDialog .btn {
+    margin-right: 10px;
 }

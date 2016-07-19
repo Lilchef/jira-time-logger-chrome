@@ -31,6 +31,10 @@ define([], function()
      * @constants Events
      */
     ConfigConstants.EVENT_INITIALISED = 'config-initialised';
+    /**
+     * @constants Events
+     */
+    ConfigConstants.EVENT_CHANGED = 'config-changed';
 
     return ConfigConstants;
 });

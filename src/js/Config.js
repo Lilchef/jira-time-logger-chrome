@@ -1,15 +1,14 @@
 /**
  * config.js file
- * 
+ *
  * Contains the Config class
- * 
+ *
  * @author Aaron Baker <me@aaronbaker.co.uk>
  * @copyright Aaron Baker 2013
  */
 
 define([
     'Container/Factory',
-    'Storage/Abstract',
     'Storage/Factory',
     'Event/Dispatcher/Config',
     'Logger',
@@ -17,7 +16,6 @@ define([
     'json!/config/config.json'
 ], function(
     containerFactory,
-    StorageAbstract,
     storageFactory,
     eventDispatcher,
     logger,
@@ -142,7 +140,7 @@ define([
      * @static
      */
     Config.prototype.alertUser = function(message) {
-        alert(message);
+        this.getContainer().showNotification('Alert', message, 4000);
     };
 
     /**
@@ -152,8 +150,7 @@ define([
      */
     Config.prototype.notifyUser = function(message)
     {
-        // TODO: improve this
-        alert(message);
+        this.getContainer().showNotification('Notice', message, 3000);
     };
 
 
@@ -167,10 +164,8 @@ define([
     Config.prototype.init = function(forContext)
     {
         var self = this;
-        var defaultJson = this.getDefaultJson();
-        this.getStorage().fetch('config', function(customJson)
+        this.load(function()
         {
-            self._buildJson(defaultJson, customJson);
             self.getEventDispatcher().configInitialised(forContext);
         });
     };
@@ -267,7 +262,7 @@ define([
 
     /**
      * Save user-entered settings
-     * 
+     *
      * @param Array settings Key-value pairs
      * @param Function callback (Optional) Called when done with the success state
      */
@@ -288,6 +283,18 @@ define([
 
         this.save(true, callback);
         this.getContainer().configurationChanged();
+        this.getEventDispatcher().configChanged();
+    };
+
+    Config.prototype.load = function(callback)
+    {
+        var self = this;
+        var defaultJson = this.getDefaultJson();
+        this.getStorage().fetch('config', function(customJson)
+        {
+            self._buildJson(defaultJson, customJson);
+            callback();
+        });
     };
 
     /*

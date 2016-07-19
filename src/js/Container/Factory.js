@@ -10,7 +10,8 @@
 define([
     'require',
     'Container/Abstract',
-    'Container/ChromeExt'
+    'Container/ChromeExt',
+    'Container/ChromeApp'
 ], function(
    require,
    Abstract
@@ -58,7 +59,7 @@ define([
     /**
      * @constant
      */
-    Factory.DEFAULT_TYPE = 'ChromeExt';
+    Factory.DEFAULT_TYPE = 'ChromeApp';
 
     /**
      * Get the container
