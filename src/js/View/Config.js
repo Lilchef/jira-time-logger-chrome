@@ -113,14 +113,13 @@ define([
         for (var section in json) {
             for (var key in json[section]) {
                 var selector = '#configForm [name="'+section+'.'+key+'"]';
-                if (!json[section][key] || $(selector).length == 0) {
-                    continue;
+                if (json[section][key] && $(selector).length == 1) {
+                    var val = this.getConfig().get(key, section);
+                    if (val instanceof Array) {
+                        val = val.join(', ');
+                    }
+                    $(selector).val(val);
                 }
-                var val = this.getConfig().get(key, section);
-                if (val instanceof Array) {
-                    val = val.join(', ');
-                }
-                $(selector).val(val);
             }
         }
         return this;

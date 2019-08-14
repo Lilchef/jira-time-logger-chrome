@@ -12,7 +12,6 @@ define([
     'jquery',
     'Container/Factory',
     'AppConstants',
-    'ConfigConstants',
     'View/Index',
     'ActivityLog'
 ], function(
@@ -20,7 +19,6 @@ define([
     $,
     containerFactory,
     AppConstants,
-    ConfigConstants,
     view,
     AL
 ) {
@@ -103,7 +101,6 @@ define([
         {
             self._registerJiraTestListener()
                 ._registerJiraTestDoneListener()
-                ._registerConfigChangedListener()
                 ._registerLoggedTotalChangedListener()
                 ._registerDayGrandTotalChangedListener()
                 ._registerTimeChangedListener()
@@ -154,18 +151,6 @@ define([
         this._registerCustomEventListener(AppConstants.EVENT_DONE_TESTING_JIRA, function()
         {
             view.hideJiraTestMessage();
-        });
-        return this;
-    };
-
-    Index.prototype._registerConfigChangedListener = function()
-    {
-        var app = this.getApp();
-        var view = this.getView();
-        this._registerCustomEventListener(ConfigConstants.EVENT_CHANGED, function()
-        {
-            app.configChanged();
-            view.configChanged();
         });
         return this;
     };
@@ -358,22 +343,19 @@ define([
 
             // No errors, submit
             var values = view.getTimeFormValues();
-            app.logTime(
-                values.time, values.issue.toUpperCase(), values.description, values.summary,
-                function(success)
-                {
-                    if (!success) {
-                        return;
-                    }
-
-                    if (app.getTimeManual()) {
-                        app.deductTime(values.time);
-                        view.showTimeAuto();
-                    } else {
-                        app.resetTime();
-                    }
-                }
+            var success = app.logTime(
+                values.time, values.issue.toUpperCase(), values.description, values.summary
             );
+            if (!success) {
+                return false;
+            }
+
+            if (app.getTimeManual()) {
+                app.deductTime(values.time);
+                view.showTimeAuto();
+            } else {
+                app.resetTime();
+            }
         });
         return this;
     };
@@ -412,12 +394,7 @@ define([
                 view.showTimeAuto();
                 app.setTimeManual(false);
             } else {
-                var currTime = app.getStopwatch().getTime();
                 app.resetTime(true);
-                // If it looks like the time logger's been running overnight offer to reset the day total
-                if (currTime.hour >= AppConstants.TIME_HOUR_LIMIT) {
-                    view.confirmLoggedTimeReset();
-                }
             }
         });
         return this;

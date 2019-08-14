@@ -1,6 +1,6 @@
-# JIRA Time Logger - Chrome App#
+# JIRA Time Logger - Chrome Extension#
 
-This is a little chrome app to help you log your time in [Atlassian's JIRA](https://www.atlassian.com/software/jira) software.
+This is a little extension to help you log your time in [Atlassian's JIRA](https://www.atlassian.com/software/jira) software.
 
 It acts as a stopwatch to monitor the length of time you've worked on something and then allows you to quickly log that time to JIRA.
 
@@ -24,7 +24,7 @@ It acts as a stopwatch to monitor the length of time you've worked on something 
 * In Chrome visit [chrome://extensions](chrome://extensions)
 * Drag-and-drop the `.crx` file on to the page
 * Chrome should ask if you to accept the permission request (just to access JIRA) then it will be installed.
-* When the app first loads it will take you to the settings screen. Fill in the details and submit.
+* When the app first loads up it will check the settings which obviously wont exist yet so you will see an alert telling you this and clicking it will take you to the settings screen. Fill in the details and submit.
 
 ### Windows ###
 Unfortunately the Windows version of Chrome does not allow extensions to be installed from anywhere but the Chrome Store. To get around this:
@@ -36,15 +36,16 @@ Unfortunately the Windows version of Chrome does not allow extensions to be inst
 
 
 ## Usage ##
-Open the Chrome browser and click the 'Apps' link on the bookmarks bar (or enter chrome://apps in the URL bar).
-You should see the time logger icon listed, click it to show the logger.
+You should see the time logger icon on the top-right of Chrome, click it to show the logger (and click anywhere else to hide it).
+If you don't see it try hovering over the right-most edge of the URL bar until the cursor changes to a left-right arrow then click and drag it left to, hopefully, reveal the time logger icon.
 
-Note: the app must remain running to continue tracking the accrued time. If you close and re-open the app the timer will reset.
+Note: as this is a Chrome extension so it is dependant on Chrome. If you close Chrome or it crashes the app will reset and you will lose any accrued time.
 
 See the [usage instructions](https://github.com/Lilchef/jira-time-logger-chrome/wiki/Usage-instructions) for more.
 
 ## Known Issues ##
 * Will only work with OnDemand JIRA instances with an `atlassian.net` address
+* Clicking 'Reconfigure' and changing the settings will cause the app to reload and any accrued time will be lost
 
 See [bugs in the issues section](https://github.com/Lilchef/jira-time-logger-chrome/issues?labels=bug&page=1&state=open) for more.
 
@@ -52,7 +53,7 @@ See [bugs in the issues section](https://github.com/Lilchef/jira-time-logger-chr
 See [enhancements in the issues section](https://github.com/Lilchef/jira-time-logger-chrome/issues?labels=enhancement&page=1&state=open)
 
 ## Author & License ##
-Copyright: Aaron Baker, 2014-2016. JIRA and the JIRA logo &copy; Atlassian, Inc.
+Copyright: Aaron Baker, 2014. JIRA and the JIRA logo &copy; Atlassian, Inc.
 
 This work is licensed under a [Creative Commons Attribution-ShareAlike 3.0 Unported License](http://creativecommons.org/licenses/by-sa/3.0/)
 

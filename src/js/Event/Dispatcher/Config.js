@@ -39,13 +39,5 @@ define([
         this.dispatchEvent(Constants.EVENT_INITIALISED+'_'+forContext);
     };
 
-    /**
-     * Trigger the config changed event
-     */
-    Config.prototype.configChanged = function()
-    {
-        this.dispatchEvent(Constants.EVENT_CHANGED);
-    };
-
     return new Config();
 });
