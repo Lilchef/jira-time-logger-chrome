@@ -150,7 +150,7 @@ define([
     Jira.prototype.testConnection = function()
     {
         this.setAjaxValue('connectionSuccess', false);
-        this._makeRequest(Constants.URL_SERVER_INFO, {}, Constants.REQUEST_GET, function()
+        this._makeRequest(Constants.URL_SERVER_INFO, null, Constants.REQUEST_GET, function()
         {
             this.setAjaxValue('connectionSuccess', true);
         }, function(xhr, status, ex)
@@ -467,7 +467,7 @@ define([
                 'Authorization': headerAuth,
                 'Content-Type': 'application/json'
             },
-            data: data ? JSON.stringify(data) : '{}',
+            data: data ? JSON.stringify(data) : null,
             timeout: Constants.AJAX_TIMEOUT_MS,
             success: success,
             error: failure
